@@ -1,0 +1,28 @@
+{
+  "name": "reposentry",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source AI pull-request reviewer — GitHub App + MCP server",
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:generate": "pnpm --filter @reposentry/core db:generate",
+    "db:push": "pnpm --filter @reposentry/core db:push",
+    "db:migrate": "pnpm --filter @reposentry/core db:migrate",
+    "db:seed": "pnpm --filter @reposentry/core db:seed",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yml,yaml}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}
