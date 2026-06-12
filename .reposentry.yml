@@ -1,0 +1,8 @@
+# RepoSentry reviewing RepoSentry (dogfood). Documented default config.
+severityThreshold: low
+ignore:
+  - "**/*.test.ts"
+focus:
+  - webhook signature verification
+  - LLM output validation
+autoReview: true

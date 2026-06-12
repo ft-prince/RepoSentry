@@ -6,6 +6,7 @@
  * `--http` flag or MCP_TRANSPORT=http: Streamable HTTP transport on MCP_PORT
  * (default 3002) at POST /mcp — for remote/hosted use.
  */
+import 'dotenv/config'
 import { createServer } from 'node:http'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'

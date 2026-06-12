@@ -29,6 +29,9 @@ importers:
       bullmq:
         specifier: ^5.34.3
         version: 5.78.0
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
       hono:
         specifier: ^4.6.14
         version: 4.12.25
@@ -60,6 +63,9 @@ importers:
       '@reposentry/core':
         specifier: workspace:*
         version: link:../../packages/core
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
       zod:
         specifier: ^3.24.1
         version: 3.25.76
