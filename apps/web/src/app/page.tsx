@@ -1,9 +1,19 @@
 import Link from 'next/link'
-import { ArrowRight, Github, GitPullRequest, Terminal, Webhook } from 'lucide-react'
+import {
+  ArrowRight,
+  Github,
+  GitPullRequest,
+  Terminal,
+  Webhook,
+  ShieldCheck,
+  Bug,
+  Gauge,
+  SpellCheck,
+} from 'lucide-react'
 import { Logo, LogoGlyph } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 
-const REPO_URL = 'https://github.com/reposentry/reposentry'
+const REPO_URL = 'https://github.com/ft-prince/RepoSentry'
 
 export default function LandingPage() {
   return (
@@ -81,9 +91,94 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* In plain English — for non-experts, dense and quiet */}
+      <section className="border-t border-border py-16">
+        <div className="flex items-center gap-2">
+          <SpellCheck className="size-4 text-accent" aria-hidden />
+          <p className="font-mono text-xs text-accent">in plain english</p>
+        </div>
+        <h2 className="mt-4 max-w-2xl text-lg font-semibold leading-snug tracking-tight">
+          It&apos;s spellcheck — but for bugs and security holes in your code.
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+          On GitHub, every code change goes through a <span className="text-foreground">pull request</span>{' '}
+          before it ships. Normally a teammate has to read it and point out mistakes by hand.
+          RepoSentry does that first read automatically: the moment a pull request opens, it studies
+          exactly what changed and leaves comments on the specific lines that look wrong — with a
+          plain explanation and a fix you can apply in one click.
+        </p>
+
+        <div className="mt-8 grid gap-3 md:grid-cols-2">
+          {/* What happens, in four steps, no jargon */}
+          <ol className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5">
+            <li className="flex gap-3">
+              <span className="font-mono text-xs text-faint">1</span>
+              <p className="text-[13px] text-muted">
+                <span className="text-foreground">You open a pull request.</span> Some code changed
+                and you want it merged.
+              </p>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-mono text-xs text-faint">2</span>
+              <p className="text-[13px] text-muted">
+                <span className="text-foreground">RepoSentry reads the change</span> and asks an AI:
+                are there bugs, security holes, or risky patterns here?
+              </p>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-mono text-xs text-faint">3</span>
+              <p className="text-[13px] text-muted">
+                <span className="text-foreground">It comments on the exact lines</span> — what&apos;s
+                wrong, why it matters, and the corrected code.
+              </p>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-mono text-xs text-faint">4</span>
+              <p className="text-[13px] text-muted">
+                <span className="text-foreground">Everything is logged</span> in a dashboard so you
+                can see history, severity, and trends.
+              </p>
+            </li>
+          </ol>
+
+          {/* What it catches, concrete */}
+          <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">What it catches</p>
+            <ul className="flex flex-col gap-3">
+              <li className="flex gap-3">
+                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-severity-critical" aria-hidden />
+                <p className="text-[13px] text-muted">
+                  <span className="text-foreground">Security holes</span> — e.g. SQL injection, where
+                  unescaped input could let an attacker read your whole database.
+                </p>
+              </li>
+              <li className="flex gap-3">
+                <Bug className="mt-0.5 size-4 shrink-0 text-severity-high" aria-hidden />
+                <p className="text-[13px] text-muted">
+                  <span className="text-foreground">Real bugs</span> — money stored as decimals,
+                  off-by-one errors, race conditions, unhandled failures.
+                </p>
+              </li>
+              <li className="flex gap-3">
+                <Gauge className="mt-0.5 size-4 shrink-0 text-severity-medium" aria-hidden />
+                <p className="text-[13px] text-muted">
+                  <span className="text-foreground">Performance & style</span> — slow queries,
+                  unbounded loops, and maintainability smells.
+                </p>
+              </li>
+            </ul>
+            <p className="mt-1 text-2xs leading-relaxed text-faint">
+              It&apos;s a first pass, not a replacement for a human reviewer. It clears the obvious
+              stuff so people can focus on design.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* How it works — numbered, dense, no icon circles */}
       <section className="border-t border-border py-16">
-        <h2 className="mb-8 text-lg font-semibold tracking-tight">How it works</h2>
+        <h2 className="mb-2 text-lg font-semibold tracking-tight">How it works</h2>
+        <p className="mb-8 text-sm text-muted">The same flow, with the technical detail.</p>
         <ol className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-3">
           {[
             {
@@ -176,7 +271,7 @@ pnpm dev   # web :3000 · api :3001 · mcp :3002`}</code>
       <footer className="flex items-center justify-between border-t border-border py-8 text-2xs text-faint">
         <span>MIT licensed. An automated first pass — not a replacement for human review.</span>
         <a href={REPO_URL} className="hover:text-muted" target="_blank" rel="noreferrer">
-          github.com/reposentry/reposentry
+          github.com/ft-prince/RepoSentry
         </a>
       </footer>
     </main>
