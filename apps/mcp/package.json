@@ -1,0 +1,30 @@
+{
+  "name": "@reposentry/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RepoSentry MCP server — the review engine as MCP tools (stdio + HTTP)",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "reposentry-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --sourcemap --clean",
+    "dev": "tsx watch src/index.ts --http",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "@reposentry/core": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
