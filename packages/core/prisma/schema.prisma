@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  githubId  BigInt   @unique
+  login     String
+  name      String?
+  email     String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  installations Installation[]
+}
+
+model Installation {
+  id                   String   @id @default(cuid())
+  githubInstallationId BigInt   @unique
+  accountLogin         String
+  accountType          String // "User" | "Organization"
+  suspended            Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  userId       String?
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  repositories Repository[]
+}
+
+model Repository {
+  id           String   @id @default(cuid())
+  githubRepoId BigInt   @unique
+  owner        String
+  name         String
+  fullName     String   @unique
+  private      Boolean  @default(false)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  installationId String
+  installation   Installation  @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  reviews        Review[]
+  settings       RepoSettings?
+
+  @@index([fullName])
+}
+
+enum ReviewStatus {
+  queued
+  running
+  completed
+  failed
+}
+
+enum Risk {
+  none
+  low
+  medium
+  high
+  critical
+}
+
+model Review {
+  id          String       @id @default(cuid())
+  status      ReviewStatus @default(queued)
+  prNumber    Int
+  prTitle     String
+  prUrl       String?
+  author      String
+  baseBranch  String?
+  headBranch  String?
+  commitSha   String
+  overallRisk Risk?
+  summary     String?
+  error       String?
+  model       String?
+  durationMs  Int?
+  createdAt   DateTime     @default(now())
+  completedAt DateTime?
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  findings     Finding[]
+
+  @@index([repositoryId, createdAt])
+  @@index([status])
+}
+
+enum Severity {
+  critical
+  high
+  medium
+  low
+}
+
+enum FindingCategory {
+  bug
+  security
+  performance
+  style
+  maintainability
+}
+
+enum FindingStatus {
+  open
+  resolved
+  dismissed
+}
+
+model Finding {
+  id           String          @id @default(cuid())
+  file         String
+  line         Int
+  severity     Severity
+  category     FindingCategory
+  title        String
+  explanation  String
+  suggestedFix String?
+  status       FindingStatus   @default(open)
+  createdAt    DateTime        @default(now())
+
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([severity])
+}
+
+model RepoSettings {
+  id                String   @id @default(cuid())
+  severityThreshold Severity @default(low)
+  ignoreGlobs       String[] @default([])
+  focusAreas        String[] @default([])
+  autoReview        Boolean  @default(true)
+  updatedAt         DateTime @updatedAt
+
+  repositoryId String     @unique
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+}
