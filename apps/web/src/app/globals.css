@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* True neutral darks — not blue-black. One restrained indigo accent. */
+:root {
+  --background: 0 0% 98.5%;
+  --surface: 0 0% 100%;
+  --surface-raised: 240 5% 96%;
+  --border: 240 5% 89%;
+  --border-strong: 240 5% 80%;
+  --foreground: 240 6% 10%;
+  --muted: 240 4% 42%;
+  --faint: 240 4% 60%;
+
+  --accent: 239 60% 56%;
+  --accent-hover: 239 60% 50%;
+  --accent-foreground: 0 0% 100%;
+  --accent-subtle: 239 60% 56% / 0.1;
+
+  --severity-critical: 0 65% 48%;
+  --severity-high: 24 80% 46%;
+  --severity-medium: 40 75% 42%;
+  --severity-low: 240 4% 52%;
+
+  --success: 152 45% 36%;
+  --danger: 0 65% 48%;
+}
+
+.dark {
+  /* #0a0a0b base, #111113 surfaces */
+  --background: 240 5% 4%;
+  --surface: 240 4% 7%;
+  --surface-raised: 240 4% 10%;
+  --border: 240 4% 15%;
+  --border-strong: 240 4% 24%;
+  --foreground: 0 0% 94%;
+  --muted: 240 4% 62%;
+  --faint: 240 4% 42%;
+
+  --accent: 235 75% 68%;
+  --accent-hover: 235 75% 74%;
+  --accent-foreground: 240 6% 8%;
+  --accent-subtle: 235 75% 68% / 0.12;
+
+  --severity-critical: 0 60% 58%;
+  --severity-high: 24 70% 56%;
+  --severity-medium: 40 65% 54%;
+  --severity-low: 240 4% 55%;
+
+  --success: 152 40% 52%;
+  --danger: 0 60% 58%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  /* All numbers tabular — metrics, line numbers, dates */
+  .tnum,
+  table,
+  code {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-1 ring-offset-background;
+  }
+  ::selection {
+    background: hsl(var(--accent) / 0.25);
+  }
+}
+
+@layer utilities {
+  .text-severity-critical { color: hsl(var(--severity-critical)); }
+  .text-severity-high { color: hsl(var(--severity-high)); }
+  .text-severity-medium { color: hsl(var(--severity-medium)); }
+  .text-severity-low { color: hsl(var(--severity-low)); }
+}
+
+/* Shiki: render both themes, toggle via the .dark class */
+.shiki,
+.shiki span {
+  background-color: transparent !important;
+}
+html:not(.dark) .shiki,
+html:not(.dark) .shiki span {
+  color: var(--shiki-light) !important;
+}
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
