@@ -1,26 +1,106 @@
-# RepoSentry
+<div align="center">
 
-**An open-source AI pull-request reviewer.** When a PR opens, RepoSentry reads the diff, finds
-bugs, security smells, and style issues, and posts inline review comments with concrete fixes —
-plus a summary and an overall risk rating. The same engine ships as an **MCP server**, so you can
-run `review_diff` on uncommitted changes from Claude Code or Cursor.
+# 🛡️ RepoSentry
 
-It is an automated **first pass**, not a replacement for a senior engineer: it catches the obvious
-stuff so human reviewers don't have to.
+**An open-source AI that reviews your GitHub pull requests automatically.**
+
+*Think spellcheck — but for bugs and security holes in your code.*
+
+[![CI](https://github.com/ft-prince/RepoSentry/actions/workflows/ci.yml/badge.svg)](https://github.com/ft-prince/RepoSentry/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-indigo.svg)](LICENSE)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)
+![Free to run](https://img.shields.io/badge/cost-%240%2Fmonth-success.svg)
+
+</div>
+
+---
+
+## What is this, really?
+
+On GitHub, every code change goes through a **pull request** before it ships. Normally a teammate
+has to read it and point out mistakes by hand. RepoSentry does that **first read automatically**:
+the moment a pull request opens, it studies exactly what changed and leaves comments on the
+specific lines that look wrong — with a plain explanation and a fix you can apply in one click.
+
+**A concrete example.** This line has a SQL-injection vulnerability:
+
+```js
+db.query('SELECT * FROM users WHERE name = "' + name + '"')
+```
+
+RepoSentry catches it within ~30 seconds of the PR opening and comments:
+
+> 🔴 **Critical · security** — Raw SQL built with string interpolation. A malicious `name` can read
+> your whole database. Use a parameterized query:
+> ```js
+> db.query('SELECT * FROM users WHERE name = $1', [name])
+> ```
+
+It's an automated **first pass**, not a replacement for a senior engineer — it clears the obvious
+stuff (injection bugs, money stored as floats, unhandled errors) so humans can focus on design.
+
+**Two ways to use it:**
+
+1. **As a GitHub bot** — reviews every pull request automatically.
+2. **As an MCP server** — plug it into Claude Code / Cursor and run `review_diff` on your
+   uncommitted changes *before* you even push.
 
 - **$0 to run** — Groq free tier for inference, free Postgres/Redis/hosting tiers everywhere else
 - **MIT licensed**, self-hostable in minutes
 - Dark-first dashboard with review history, severity breakdowns, and metrics
 
+## How it works
+
+```mermaid
+flowchart LR
+    A([Developer opens a Pull Request]) --> B[GitHub sends a webhook]
+    B --> C{apps/api<br/>verify HMAC signature}
+    C -->|invalid| X[Reject 401]
+    C -->|valid| D[Queue the review<br/>BullMQ + Redis]
+    D --> E[Review engine<br/>packages/core]
+    E --> F[Fetch diff &amp; changed files<br/>skip lockfiles / generated]
+    F --> G[Chunk the diff<br/>fit the context window]
+    G --> H[[Groq · Llama 3.3 70B<br/>strict JSON findings]]
+    H --> I[Validate with Zod<br/>anchor to exact lines<br/>dedupe]
+    I --> J[Post ONE review to GitHub<br/>inline comments + summary]
+    I --> K[(Save to Postgres)]
+    K --> L[Dashboard<br/>apps/web]
+    J --> A
+
+    style H fill:#4f46e5,stroke:#4f46e5,color:#fff
+    style A fill:#18181b,stroke:#3f3f46,color:#fff
 ```
-GitHub PR event ──▶ webhook (apps/api) ──▶ BullMQ queue ──▶ review engine (packages/core)
-                                                                │  Groq · llama-3.3-70b
-                                                                ▼
-                  dashboard (apps/web) ◀── REST API ◀── Postgres ◀── inline comments → GitHub
-                  Claude Code / Cursor ◀── MCP tools (apps/mcp) ──┘
+
+The same engine also runs as an MCP server for editors:
+
+```mermaid
+flowchart LR
+    CC([Claude Code / Cursor]) -->|review_diff| MCP[apps/mcp<br/>MCP server]
+    MCP --> CORE[Review engine<br/>packages/core]
+    CORE --> GROQ[[Groq · Llama 3.3 70B]]
+    GROQ --> CORE
+    CORE -->|findings JSON| CC
+
+    style GROQ fill:#4f46e5,stroke:#4f46e5,color:#fff
+    style CC fill:#18181b,stroke:#3f3f46,color:#fff
 ```
 
 ## Monorepo layout
+
+```mermaid
+flowchart TD
+    subgraph deployables[3 deployables]
+        WEB[apps/web<br/>Next.js 15 dashboard + landing]
+        API[apps/api<br/>Hono · webhooks · queue · REST]
+        MCP[apps/mcp<br/>MCP server · stdio + HTTP]
+    end
+    CORE[packages/core<br/>review engine · ReviewLLM seam<br/>GitHub client · Prisma DB layer]
+    API --> CORE
+    MCP --> CORE
+    WEB -->|REST| API
+
+    style CORE fill:#4f46e5,stroke:#4f46e5,color:#fff
+```
 
 | Path | What it is |
 | --- | --- |
@@ -34,8 +114,8 @@ GitHub PR event ──▶ webhook (apps/api) ──▶ BullMQ queue ──▶ re
 Prereqs: Node 20+, pnpm 9 (`corepack enable`), Docker.
 
 ```bash
-git clone https://github.com/reposentry/reposentry.git
-cd reposentry
+git clone https://github.com/ft-prince/RepoSentry.git
+cd RepoSentry
 docker compose up -d            # local Postgres + Redis, zero cloud accounts
 pnpm install
 
