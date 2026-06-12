@@ -89,7 +89,7 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
             <PaletteItem
               icon={ExternalLink}
               onSelect={() =>
-                run(() => window.open('https://github.com/reposentry/reposentry', '_blank'))
+                run(() => window.open('https://github.com/ft-prince/RepoSentry', '_blank'))
               }
             >
               Open GitHub repo

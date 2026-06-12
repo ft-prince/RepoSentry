@@ -48,7 +48,7 @@ export function Sidebar() {
 
       <div className="border-t border-border p-2">
         <a
-          href="https://github.com/reposentry/reposentry"
+          href="https://github.com/ft-prince/RepoSentry"
           target="_blank"
           rel="noreferrer"
           className="flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] text-muted transition-colors duration-100 hover:bg-surface-raised/60 hover:text-foreground"
