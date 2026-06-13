@@ -20,3 +20,6 @@ coverage/
 
 # prisma
 packages/core/prisma/*.db
+
+# local Claude Code settings (keep launch.json for dev preview convenience)
+.claude/settings.local.json

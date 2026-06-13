@@ -109,6 +109,28 @@ flowchart TD
 | `apps/mcp` | MCP server exposing the engine as tools (stdio + HTTP transports) |
 | `apps/web` | Next.js 15 dashboard + marketing page |
 
+## The dashboard
+
+A dark-first Next.js dashboard sits over the REST API. It's built to be obvious for
+first-time users and dense enough for daily use:
+
+- **Guided onboarding** — the Overview page shows a 6-step setup checklist with a progress
+  bar (connect a repo → configure rules → open a PR → first review → browse findings → use
+  the MCP server), and an in-app **How it works** page explaining the pipeline, what each
+  severity means, and what RepoSentry catches.
+- **Reviews explorer** — full-text search (PR title / author), filters for repository,
+  author, status, risk, and date range, sortable columns (risk, findings, date), active
+  filter chips, and **saved views** (named filter presets). All filter state lives in the
+  URL, so any view is shareable and bookmarkable.
+- **Review detail** — PR header with branch/commit, findings grouped by file with
+  Shiki-highlighted suggested fixes, copy buttons, and a one-click **re-run review**.
+- **Polish** — KPI tooltips, skeleton loading states, friendly empty/error states, a Cmd-K
+  command palette, full keyboard navigation, reduced-motion support, and a responsive mobile
+  layout with a slide-in nav drawer.
+
+The dashboard is a thin client: every page reads from the REST API, and client components
+call it through an authenticated proxy route so the API token never reaches the browser.
+
 ## Self-host in 5 minutes
 
 Prereqs: Node 20+, pnpm 9 (`corepack enable`), Docker.
