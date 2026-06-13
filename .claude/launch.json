@@ -6,6 +6,13 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@reposentry/web", "dev"],
       "port": 3000
+    },
+    {
+      "name": "web-mobile",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@reposentry/web", "exec", "next", "dev", "--port", "3100"],
+      "port": 3100,
+      "autoPort": false
     }
   ]
 }

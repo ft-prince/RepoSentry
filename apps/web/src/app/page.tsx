@@ -37,7 +37,7 @@ export default function LandingPage() {
 
       {/* Hero — copy first, no gradient, no emoji */}
       <section className="grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
-        <div className="flex flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-5">
           <p className="font-mono text-xs text-accent">open source · MIT · $0 to run</p>
           <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
             A first-pass code review on every pull request.
@@ -47,7 +47,7 @@ export default function LandingPage() {
             smells, and style issues, and leaves inline comments with concrete fixes. It won&apos;t
             replace your senior engineer — it makes sure they never see the obvious stuff.
           </p>
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             <Link href="/overview">
               <Button variant="primary" size="lg">
                 Open dashboard <ArrowRight aria-hidden />
@@ -63,7 +63,7 @@ export default function LandingPage() {
         </div>
 
         {/* A realistic review comment, not a floating glass card */}
-        <div className="rounded-lg border border-border bg-surface font-mono text-xs leading-relaxed">
+        <div className="min-w-0 rounded-lg border border-border bg-surface font-mono text-xs leading-relaxed">
           <div className="flex items-center gap-2 border-b border-border px-3.5 py-2 text-2xs text-faint">
             <GitPullRequest className="size-3.5" aria-hidden />
             acme/checkout-service · PR #142 · src/payments/intent.ts
@@ -214,7 +214,7 @@ export default function LandingPage() {
 
       {/* MCP angle */}
       <section className="grid items-center gap-10 border-t border-border py-16 md:grid-cols-2">
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           <p className="font-mono text-xs text-accent">mcp server</p>
           <h2 className="text-lg font-semibold tracking-tight">
             The same reviewer, inside your editor.
@@ -231,7 +231,7 @@ export default function LandingPage() {
             <li>explain_finding — deep dive on one finding</li>
           </ul>
         </div>
-        <pre className="overflow-x-auto rounded-lg border border-border bg-surface p-4 font-mono text-xs leading-relaxed text-muted">
+        <pre className="min-w-0 overflow-x-auto rounded-lg border border-border bg-surface p-4 font-mono text-xs leading-relaxed text-muted">
           <code>{`// .mcp.json (Claude Code) or Cursor settings
 {
   "mcpServers": {
