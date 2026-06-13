@@ -17,7 +17,9 @@ dist/
 .DS_Store
 *.log
 coverage/
-
+claude/
+.claude/
+.claude
 # prisma
 packages/core/prisma/*.db
 
