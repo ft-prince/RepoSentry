@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Providers } from '@/components/providers'
+import { DemoBanner } from '@/components/demo-banner'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -25,7 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="min-h-screen font-sans text-sm">
-        <Providers>{children}</Providers>
+        <Providers>
+          <DemoBanner />
+          {children}
+        </Providers>
       </body>
     </html>
   )

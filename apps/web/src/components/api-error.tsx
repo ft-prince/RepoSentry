@@ -7,8 +7,9 @@ export function ApiError({ message }: { message: string }) {
       <p className="text-sm font-medium">Couldn&apos;t reach the RepoSentry API</p>
       <p className="max-w-md text-xs text-muted">{message}</p>
       <p className="max-w-md text-xs text-faint">
-        Start it with <code className="font-mono">pnpm dev</code> (or check API_URL /
-        API_INTERNAL_TOKEN in apps/web/.env).
+        This hosted preview ships the dashboard only — the review backend isn&apos;t deployed.
+        Run the full stack locally with <code className="font-mono">pnpm dev</code> (or check
+        API_URL / API_INTERNAL_TOKEN in apps/web/.env).
       </p>
     </div>
   )
