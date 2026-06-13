@@ -16,6 +16,7 @@
   "scripts": {
     "build": "pnpm db:generate && tsup src/index.ts --format esm --dts --sourcemap --clean",
     "dev": "tsup src/index.ts --format esm --dts --sourcemap --watch",
+    "postinstall": "prisma generate",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run",
