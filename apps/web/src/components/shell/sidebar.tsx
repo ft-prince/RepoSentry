@@ -2,16 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutGrid, GitPullRequest, FolderGit2, Settings, BookOpen } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo'
-
-const NAV = [
-  { href: '/overview', label: 'Overview', icon: LayoutGrid },
-  { href: '/reviews', label: 'Reviews', icon: GitPullRequest },
-  { href: '/repositories', label: 'Repositories', icon: FolderGit2 },
-  { href: '/settings', label: 'Settings', icon: Settings },
-] as const
+import { NAV_ITEMS } from './nav-items'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -25,7 +19,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 p-2" aria-label="Main">
-        {NAV.map(({ href, label, icon: Icon }) => {
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`)
           return (
             <Link
@@ -54,7 +48,7 @@ export function Sidebar() {
           className="flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] text-muted transition-colors duration-100 hover:bg-surface-raised/60 hover:text-foreground"
         >
           <BookOpen className="size-4 text-faint" aria-hidden />
-          Docs & GitHub
+          GitHub
         </a>
       </div>
     </aside>

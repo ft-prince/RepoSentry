@@ -11,6 +11,7 @@ import {
   Settings,
   SunMoon,
   ExternalLink,
+  BookOpen,
 } from 'lucide-react'
 
 const CommandPaletteContext = createContext<{ open: () => void }>({ open: () => {} })
@@ -71,6 +72,9 @@ export function CommandPaletteProvider({ children }: { children: React.ReactNode
             </PaletteItem>
             <PaletteItem icon={FolderGit2} onSelect={() => run(() => router.push('/repositories'))}>
               Repositories
+            </PaletteItem>
+            <PaletteItem icon={BookOpen} onSelect={() => run(() => router.push('/how-it-works'))}>
+              How it works
             </PaletteItem>
             <PaletteItem icon={Settings} onSelect={() => run(() => router.push('/settings'))}>
               Settings

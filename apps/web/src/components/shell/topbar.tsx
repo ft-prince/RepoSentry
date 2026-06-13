@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { Command } from 'lucide-react'
 import { ThemeToggle } from './theme-toggle'
+import { MobileNav } from './mobile-nav'
 import { useCommandPalette } from './command-palette'
 
 const TITLES: [string, string][] = [
@@ -10,6 +11,7 @@ const TITLES: [string, string][] = [
   ['/reviews/', 'Review detail'],
   ['/reviews', 'Reviews'],
   ['/repositories', 'Repositories'],
+  ['/how-it-works', 'How it works'],
   ['/settings', 'Settings'],
 ]
 
@@ -19,8 +21,11 @@ export function Topbar() {
   const title = TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'RepoSentry'
 
   return (
-    <header className="sticky top-0 z-10 flex h-12 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur md:pl-6">
-      <h1 className="text-sm font-medium">{title}</h1>
+    <header className="sticky top-0 z-10 flex h-12 items-center justify-between border-b border-border bg-background/90 px-2 backdrop-blur md:px-4 md:pl-6">
+      <div className="flex items-center gap-1">
+        <MobileNav />
+        <h1 className="text-sm font-medium">{title}</h1>
+      </div>
       <div className="flex items-center gap-1.5">
         <button
           onClick={open}
