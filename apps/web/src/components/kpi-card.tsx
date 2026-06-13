@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { InfoHint } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 const COUNT_UP_MS = 600
@@ -13,16 +14,22 @@ export function KpiCard({
   value,
   hint,
   tone,
+  info,
 }: {
   label: string
   value: number | string
   hint?: string
   tone?: 'danger'
+  /** Optional help text shown via a "?" hint next to the label. */
+  info?: string
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{label}</CardTitle>
+        <CardTitle className="flex items-center gap-1.5">
+          {label}
+          {info && <InfoHint content={info} />}
+        </CardTitle>
       </CardHeader>
       <CardContent className="pt-1.5">
         <div
