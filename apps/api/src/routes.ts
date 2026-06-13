@@ -6,8 +6,10 @@ import {
   getReview,
   getRepoSettings,
   listRepositories,
+  listReviewAuthors,
   listReviews,
   prisma,
+  riskSchema,
   severitySchema,
   updateRepoSettings,
 } from '@reposentry/core'
@@ -17,6 +19,13 @@ import type { ReviewJobData } from './queue.js'
 const listQuerySchema = z.object({
   repo: z.string().optional(),
   status: z.enum(['queued', 'running', 'completed', 'failed']).optional(),
+  risk: riskSchema.optional(),
+  author: z.string().max(100).optional(),
+  search: z.string().max(200).optional(),
+  since: z.string().datetime().optional(),
+  until: z.string().datetime().optional(),
+  sort: z.enum(['createdAt', 'risk', 'findings']).default('createdAt'),
+  order: z.enum(['asc', 'desc']).default('desc'),
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
 })
@@ -41,10 +50,40 @@ export function buildApiRoutes(queue: Queue<ReviewJobData>): Hono {
   api.get('/reviews', async (c) => {
     const query = listQuerySchema.safeParse(c.req.query())
     if (!query.success) return c.json(err('invalid query parameters'), 400)
-    const { repo, status, page, pageSize } = query.data
-    const result = await listReviews({ repoFullName: repo, status, page, pageSize })
+    const { repo, status, risk, author, search, since, until, sort, order, page, pageSize } =
+      query.data
+    const result = await listReviews({
+      repoFullName: repo,
+      status,
+      risk,
+      author,
+      search,
+      since,
+      until,
+      sort,
+      order,
+      page,
+      pageSize,
+    })
     return c.json(
-      ok(jsonSafe(result.reviews), { total: result.total, page: result.page, pageSize: result.pageSize })
+      ok(jsonSafe(result.reviews), {
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+      })
+    )
+  })
+
+  // Filter facets for the Reviews page (authors + connected repos).
+  api.get('/reviews/facets', async (c) => {
+    const [authors, repos] = await Promise.all([listReviewAuthors(), listRepositories()])
+    return c.json(
+      ok(
+        jsonSafe({
+          authors,
+          repos: repos.map((r) => r.fullName),
+        })
+      )
     )
   })
 

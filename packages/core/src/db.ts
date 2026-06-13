@@ -164,20 +164,70 @@ export async function failReview(reviewId: string, error: string) {
   })
 }
 
+export type ReviewSortField = 'createdAt' | 'risk' | 'findings'
+export type SortOrder = 'asc' | 'desc'
+
 export interface ListReviewsParams {
   repoFullName?: string
   status?: 'queued' | 'running' | 'completed' | 'failed'
+  /** Filter by overall risk rating. */
+  risk?: Risk
+  /** Filter by PR author (exact GitHub login). */
+  author?: string
+  /** Free-text search over PR title and author. */
+  search?: string
+  /** ISO date strings bounding createdAt (inclusive). */
+  since?: string
+  until?: string
+  sort?: ReviewSortField
+  order?: SortOrder
   page?: number
   pageSize?: number
+}
+
+/** Map a sort field to a Prisma orderBy clause. Risk/findings have a stable createdAt tiebreak. */
+function reviewOrderBy(
+  sort: ReviewSortField,
+  order: SortOrder
+): Prisma.ReviewOrderByWithRelationInput[] {
+  switch (sort) {
+    case 'findings':
+      return [{ findings: { _count: order } }, { createdAt: 'desc' }]
+    case 'risk':
+      // Enum order in the schema is none→critical, so asc = least risky first.
+      return [{ overallRisk: order }, { createdAt: 'desc' }]
+    case 'createdAt':
+    default:
+      return [{ createdAt: order }]
+  }
 }
 
 export async function listReviews(params: ListReviewsParams = {}) {
   const page = Math.max(1, params.page ?? 1)
   const pageSize = Math.min(100, Math.max(1, params.pageSize ?? 20))
+
+  const createdAt: Prisma.DateTimeFilter = {}
+  if (params.since) createdAt.gte = new Date(params.since)
+  if (params.until) createdAt.lte = new Date(params.until)
+
   const where: Prisma.ReviewWhereInput = {
     ...(params.repoFullName ? { repository: { fullName: params.repoFullName } } : {}),
     ...(params.status ? { status: params.status } : {}),
+    ...(params.risk ? { overallRisk: params.risk } : {}),
+    ...(params.author ? { author: params.author } : {}),
+    ...(params.since || params.until ? { createdAt } : {}),
+    ...(params.search
+      ? {
+          OR: [
+            { prTitle: { contains: params.search, mode: 'insensitive' } },
+            { author: { contains: params.search, mode: 'insensitive' } },
+          ],
+        }
+      : {}),
   }
+
+  const orderBy = reviewOrderBy(params.sort ?? 'createdAt', params.order ?? 'desc')
+
   const [total, reviews] = await prisma.$transaction([
     prisma.review.count({ where }),
     prisma.review.findMany({
@@ -187,12 +237,22 @@ export async function listReviews(params: ListReviewsParams = {}) {
         _count: { select: { findings: true } },
         findings: { select: { severity: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),
   ])
   return { reviews, total, page, pageSize }
+}
+
+/** Distinct PR authors across all reviews, for the Reviews filter dropdown. */
+export async function listReviewAuthors(): Promise<string[]> {
+  const rows = await prisma.review.findMany({
+    distinct: ['author'],
+    select: { author: true },
+    orderBy: { author: 'asc' },
+  })
+  return rows.map((r) => r.author).filter(Boolean)
 }
 
 export async function getReview(reviewId: string) {
